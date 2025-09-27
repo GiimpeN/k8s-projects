@@ -7,26 +7,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: homeassistant
+  name: home-assistant
   namespace: home-assistant
   labels:
-    app: homeassistant
+    app: home-assistant
     component: smart-home
     version: stable
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: homeassistant
+      app: home-assistant
   template:
     metadata:
       labels:
-        app: homeassistant
+        app: home-assistant
         component: smart-home
         version: stable
     spec:
       containers:
-      - name: homeassistant
+      - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable
         ports:
         - containerPort: 8123
@@ -50,20 +50,20 @@ spec:
       volumes:
       - name: config
         persistentVolumeClaim:
-          claimName: homeassistant-pvc
+          claimName: home-assistant-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: homeassistant
+  name: home-assistant
   namespace: home-assistant
   labels:
-    app: homeassistant
+    app: home-assistant
     component: smart-home
 spec:
   type: NodePort
   selector:
-    app: homeassistant
+    app: home-assistant
   ports:
     - name: http
       port: 8123
