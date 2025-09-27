@@ -1,7 +1,18 @@
+# Home Assistant Deployment Configuration
+# This configuration deploys Home Assistant with persistent storage in the home-assistant namespace
+# Access: http://your-cluster-ip:30080
+# Storage: 10Gi persistent volume using Longhorn storage class
+# Timezone: Europe/Stockholm
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: homeassistant
+  namespace: home-assistant
+  labels:
+    app: homeassistant
+    component: smart-home
+    version: stable
 spec:
   replicas: 1
   selector:
@@ -11,15 +22,31 @@ spec:
     metadata:
       labels:
         app: homeassistant
+        component: smart-home
+        version: stable
     spec:
       containers:
       - name: homeassistant
         image: ghcr.io/home-assistant/home-assistant:stable
         ports:
         - containerPort: 8123
+          name: http
+          protocol: TCP
+        # Set timezone to Europe/Stockholm to match cluster configuration
+        env:
+        - name: TZ
+          value: "Europe/Stockholm"
         volumeMounts:
         - name: config
           mountPath: /config
+        # Resource limits for better cluster management
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
       volumes:
       - name: config
         persistentVolumeClaim:
@@ -29,11 +56,18 @@ apiVersion: v1
 kind: Service
 metadata:
   name: homeassistant
+  namespace: home-assistant
+  labels:
+    app: homeassistant
+    component: smart-home
 spec:
   type: NodePort
   selector:
     app: homeassistant
   ports:
-    - port: 8123
+    - name: http
+      port: 8123
       targetPort: 8123
-      nodePort: 30123
+      # Updated to match cluster configuration (was 30123)
+      nodePort: 30080
+      protocol: TCP

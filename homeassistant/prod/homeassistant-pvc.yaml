@@ -1,11 +1,24 @@
+# Home Assistant Persistent Volume Claim
+# This PVC provides persistent storage for Home Assistant configuration and data
+# Storage: 10Gi using Longhorn distributed storage (updated from 5Gi local-path)
+# Access Mode: ReadWriteOnce (single node access)
+# Namespace: home-assistant
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: homeassistant-pvc
+  namespace: home-assistant
+  labels:
+    app: homeassistant
+    component: storage
+    purpose: config-data
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
-  storageClassName: local-path
+      # Updated to match actual cluster usage (was 5Gi)
+      storage: 10Gi
+  # Updated to use Longhorn distributed storage (was local-path)
+  storageClassName: longhorn
