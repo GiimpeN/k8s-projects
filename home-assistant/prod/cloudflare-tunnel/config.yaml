@@ -1,0 +1,11 @@
+# Cloudflare Tunnel Configuration for Home Assistant
+# This configuration routes ha.swe-bit.com to the Home Assistant service
+tunnel: ha-swe-bit-com-tunnel
+credentials-file: /etc/cloudflared/creds/credentials.json
+
+ingress:
+  # Route ha.swe-bit.com to Home Assistant service
+  - hostname: ha.swe-bit.com
+    service: http://home-assistant.home-assistant:8123
+  # Catch-all rule for any other requests
+  - service: http_status:404
