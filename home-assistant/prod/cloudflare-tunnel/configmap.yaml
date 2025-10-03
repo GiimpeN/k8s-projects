@@ -14,6 +14,6 @@ data:
     ingress:
       # Route ha.swe-bit.com to Home Assistant service
       - hostname: ha.swe-bit.com
-        service: http://home-assistant.home-assistant:8123
+        service: http://home-assistant:8123
       # Catch-all rule for any other requests
       - service: http_status:404
