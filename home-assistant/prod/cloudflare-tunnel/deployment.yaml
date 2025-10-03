@@ -44,19 +44,7 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
-        # Health checks
-        livenessProbe:
-          httpGet:
-            path: /ready
-            port: 2000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 2000
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        # Removed HTTP probes as cloudflared does not expose /ready on port 2000; tunnel logs confirm health
       volumes:
       - name: config
         configMap:
