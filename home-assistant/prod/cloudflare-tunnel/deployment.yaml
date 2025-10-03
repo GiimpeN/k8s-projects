@@ -20,7 +20,7 @@ spec:
       containers:
       - name: cloudflared
         image: cloudflare/cloudflared:latest
-        command: ["cloudflared", "tunnel", "--config", "/etc/cloudflared/config/config.yaml", "run"]
+        command: ["cloudflared", "tunnel", "--config", "/etc/cloudflared/config/config.yaml", "--origincert", "/etc/cloudflared/cert.pem", "run"]
         ports:
         - containerPort: 2000
           name: http
@@ -31,6 +31,10 @@ spec:
           readOnly: true
         - name: creds
           mountPath: /etc/cloudflared/creds
+          readOnly: true
+        - name: cert
+          mountPath: /etc/cloudflared/cert.pem
+          subPath: cert.pem
           readOnly: true
         # Resource limits for better cluster management
         resources:
@@ -60,3 +64,7 @@ spec:
       - name: creds
         secret:
           secretName: cloudflare-tunnel-creds
+      - name: cert
+        secret:
+          secretName: cloudflare-tunnel-cert
+          defaultMode: 0400
